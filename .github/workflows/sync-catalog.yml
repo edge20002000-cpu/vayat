@@ -1,0 +1,53 @@
+name: مزامنة كتالوج واتساب تلقائياً
+
+on:
+  schedule:
+    # كل 6 ساعات
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      CATALOG_ID: ${{ secrets.CATALOG_ID }}
+      CATALOG_TOKEN: ${{ secrets.CATALOG_TOKEN }}
+
+    steps:
+      - name: تحميل الملفات
+        uses: actions/checkout@v4
+
+      - name: تثبيت Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: إعداد بيانات الكتالوج من الأسرار
+        run: |
+          python - <<'PY'
+          import json, os
+          cfg = json.load(open('config.json', encoding='utf-8'))
+          cfg['catalog_id'] = os.environ['CATALOG_ID']
+          cfg['access_token'] = os.environ['CATALOG_TOKEN']
+          with open('config.json', 'w', encoding='utf-8') as f:
+              json.dump(cfg, f, ensure_ascii=False, indent=2)
+          PY
+
+      - name: مزامنة المنتجات
+        run: python sync_catalog.py
+
+      - name: حفظ التغييرات في المستودع
+        run: |
+          git config user.name "Vayat Sync"
+          git config user.email "sync@vayat.egypt"
+          git checkout -- config.json
+          git add products.js catalog.json data.json images 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "لا توجد تغييرات جديدة"
+          else
+            git commit -m "مزامنة كتالوج واتساب تلقائياً"
+            git push
+          fi
