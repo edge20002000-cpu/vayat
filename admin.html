@@ -525,7 +525,7 @@ function renderForms(){
     SETTINGS.map(([k,l])=>`<div class="field"><label>${l}</label><input data-s="${k}" value="${esc(data.settings[k]||'')}" dir="ltr"></div>`).join('')+
     `<div class="gh-box">
       <div class="gallery-title">🚀 النشر المجاني على GitHub Pages</div>
-      <div class="field"><label>اسم المستودع (مثال: ahmed/vayat)</label><input data-s="githubRepo" value="${esc(data.settings.githubRepo||'')}" dir="ltr" placeholder="owner/repo"></div>
+      <div class="field"><label>اسم المستودع (مثال: ahmed/vayat)</label><input data-s="githubRepo" value="${esc(data.settings.githubRepo||'edge20002000-cpu/vayat')}" dir="ltr" placeholder="owner/repo"></div>
       <div class="field"><label>الفرع</label><input data-s="githubBranch" value="${esc(data.settings.githubBranch||'main')}" dir="ltr" placeholder="main"></div>
       <div class="field"><label>توكن GitHub (صلاحية Contents: write فقط)</label><input data-s="githubToken" type="password" value="${esc(data.settings.githubToken||'')}" dir="ltr" placeholder="ghp_..."></div>
       <div class="gallery-tools">
